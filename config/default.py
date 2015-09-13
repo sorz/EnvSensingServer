@@ -1,0 +1,5 @@
+"""
+Default configurations.
+"""
+
+DEBUG = False
