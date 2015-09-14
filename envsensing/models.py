@@ -10,9 +10,10 @@ class User(db.Model):
     password_hash = db.Column(db.String(128))
 
 
-    def __init__(self, username, email):
+    def __init__(self, username, email, password):
         self.username = username
         self.email = email
+        self.password = password
 
 
     @hybrid_property
