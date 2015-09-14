@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 
-from ..models import User
+from ..models.user import User
 
 
 home = Blueprint("home", __name__)

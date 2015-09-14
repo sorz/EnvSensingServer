@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, g
 from flask.ext.httpauth import HTTPBasicAuth
 
 from .. import db
-from ..models import User
+from ..models.user import User
 
 
 api = Blueprint("api", __name__)
