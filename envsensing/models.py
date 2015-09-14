@@ -26,7 +26,7 @@ class User(db.Model):
         self.password_hash = bcrypt.generate_password_hash(plaintext)
 
 
-    def check_password(self, plaintext):
+    def verify_password(self, plaintext):
         return bcrypt.check_password_hash(self.password_hash, plaintext)
 
 

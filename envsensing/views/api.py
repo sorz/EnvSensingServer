@@ -1,11 +1,12 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, g
+from flask.ext.httpauth import HTTPBasicAuth
 
 from .. import db
 from ..models import User
 
 
 api = Blueprint("api", __name__)
-
+auth = HTTPBasicAuth()
 
 class APIException(Exception):
     # Reference:
@@ -30,10 +31,19 @@ def handle_api_exception(error):
     return response
 
 
-@api.route('/users', methods=['POST'])
-def new_user():
+@auth.verify_password
+def verify_password(username, password):
     # Reference:
     # http://blog.miguelgrinberg.com/post/restful-authentication-with-flask
+    user = User.query.filter_by(username = username).first()
+    if not user or not user.verify_password(password):
+        return False
+    g.user = user
+    return True
+
+
+@api.route('/users', methods=['POST'])
+def new_user():
     username = request.form.get('username')
     email = request.form.get('email')
     password = request.form.get('password')
@@ -49,4 +59,10 @@ def new_user():
     db.session.add(user)
     db.session.commit()
     return '', 204
+
+
+@api.route('/token', methods=['GET'])
+@auth.login_required
+def get_token():
+    return jsonify({ 'token': 'TODO' })
 
