@@ -32,12 +32,14 @@ def handle_api_exception(error):
 
 
 @auth.verify_password
-def verify_password(username, password):
+def verify_password(username_or_token, password):
     # Reference:
     # http://blog.miguelgrinberg.com/post/restful-authentication-with-flask
-    user = User.query.filter_by(username = username).first()
-    if not user or not user.verify_password(password):
-        return False
+    user = User.verify_token(username_or_token)
+    if user is None:
+        user = User.query.filter_by(username=username_or_token).first()
+        if user is None or not user.verify_password(password):
+            return False
     g.user = user
     return True
 
@@ -64,5 +66,5 @@ def new_user():
 @api.route('/token', methods=['GET'])
 @auth.login_required
 def get_token():
-    return jsonify({ 'token': 'TODO' })
+    return jsonify({ 'token': g.user.generate_token() })
 
