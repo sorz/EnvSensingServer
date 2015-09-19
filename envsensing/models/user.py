@@ -11,6 +11,8 @@ class User(db.Model):
     email = db.Column(db.String(90), unique=True)
     password_hash = db.Column(db.String(128))
 
+    devices = db.relationship('Device', backref='user', lazy='dynamic')
+
 
     def __init__(self, username, email, password):
         self.username = username
