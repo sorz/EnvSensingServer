@@ -14,8 +14,9 @@ bcrypt = Bcrypt(app)
 
 # Register views
 from .views.home import home
-from .views.api import api
-
 app.register_blueprint(home)
-app.register_blueprint(api, url_prefix='/api')
 
+# Register APIs
+API_PREFIX = '/api'
+from .resources import users
+app.register_blueprint(users.bp, url_prefix=API_PREFIX)

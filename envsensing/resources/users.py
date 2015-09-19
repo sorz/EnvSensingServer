@@ -3,32 +3,11 @@ from flask.ext.httpauth import HTTPBasicAuth
 
 from .. import db
 from ..models.user import User
+from . import APIException
 
 
-api = Blueprint("api", __name__)
+bp = Blueprint("user", __name__)
 auth = HTTPBasicAuth()
-
-class APIException(Exception):
-    # Reference:
-    # http://flask.pocoo.org/docs/0.10/patterns/apierrors/
-    def __init__(self, message, status_code=400, payload=None):
-        super().__init__()
-        self.message = message
-        self.status_code = status_code
-        self.payload = payload
-
-
-    def to_dict(self):
-        rv = dict(self.payload or ())
-        rv['message'] = self.message
-        return rv
-
-
-@api.errorhandler(APIException)
-def handle_api_exception(error):
-    response = jsonify(error.to_dict())
-    response.status_code = error.status_code
-    return response
 
 
 @auth.verify_password
@@ -44,7 +23,7 @@ def verify_password(username_or_token, password):
     return True
 
 
-@api.route('/users', methods=['POST'])
+@bp.route('/users', methods=['POST'])
 def new_user():
     username = request.form.get('username')
     email = request.form.get('email')
@@ -63,7 +42,7 @@ def new_user():
     return '', 204
 
 
-@api.route('/token', methods=['GET'])
+@bp.route('/token', methods=['GET'])
 @auth.login_required
 def get_token():
     return jsonify({ 'token': g.user.generate_token() })
