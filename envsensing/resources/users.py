@@ -29,5 +29,5 @@ def new_user():
 @bp.route('/token', methods=['GET'])
 @auth.login_required
 def get_token():
-    return jsonify({ 'token': g.user.generate_token() })
+    return jsonify(token=g.user.generate_token())
 
