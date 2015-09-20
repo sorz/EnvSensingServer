@@ -1,3 +1,4 @@
+from flask import g, jsonify
 from flask.ext.httpauth import HTTPBasicAuth
 
 from .. import app
