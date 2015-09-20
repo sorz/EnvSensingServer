@@ -1,4 +1,4 @@
-from flask import g, jsonify
+from flask import g, jsonify, request
 from flask.ext.httpauth import HTTPBasicAuth
 
 from .. import app
@@ -41,4 +41,21 @@ def handle_api_exception(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
+
+# Reference:
+# https://github.com/mitsuhiko/flask/issues/686
+class ParamJson(dict):
+    def __getitem__(self, key):
+        if key in self:
+            return super().__getitem__(key)
+        else:
+            raise APIException('Lack of argument: %s' % key)
+
+
+def get_json_params():
+    json = request.get_json()
+    if json is None:
+        raise APIException('JSON data is required.')
+    return ParamJson(json)
 

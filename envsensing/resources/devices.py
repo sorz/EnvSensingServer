@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, g
 
 from .. import db
 from ..models.device import Device
-from . import auth, APIException
+from . import auth, get_json_params, APIException
 
 
 bp = Blueprint("devices", __name__)
@@ -30,11 +30,8 @@ def update(device_id):
     device = g.user.devices.filter_by(device_id=device_id).first()
     if device is None:
         raise APIException("Device not found", 404)
-    name = request.form.get('name')
-    if name is None:
-        raise APIException('Lack of arguments: name')
 
-    device.name = name
+    device.name = get_json_params()['name']
     db.session.add(device)
     db.session.commit()
     return '', 204
@@ -43,15 +40,12 @@ def update(device_id):
 @bp.route('/devices', methods=['POST'])
 @auth.login_required
 def create():
-    id = request.form.get('device_id')
-    name = request.form.get('name')
-
-    if id is None or name is None:
-        raise APIException('Lack of arguments.')
-    if g.user.devices.filter_by(device_id=id).first() is not None:
+    device = get_json_params()
+    if g.user.devices.filter_by(
+            device_id=device['device_id']).first() is not None:
         raise APIException('Device has been registered.')
 
-    device = Device(g.user, id, name)
+    device = Device(g.user, device['device_id'], device['name'])
     db.session.add(device)
     db.session.commit()
     return '', 204
