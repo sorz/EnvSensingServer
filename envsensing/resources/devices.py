@@ -7,7 +7,7 @@ from . import auth, get_json_params, APIException
 
 bp = Blueprint("devices", __name__)
 
-@bp.route('/devices', methods=['GET'])
+@bp.route('/', methods=['GET'])
 @auth.login_required
 def index():
     records = g.user.devices.all()
@@ -15,7 +15,7 @@ def index():
     return jsonify(devices=devices)
 
 
-@bp.route('/devices/<device_id>', methods=['GET'])
+@bp.route('/<device_id>', methods=['GET'])
 @auth.login_required
 def get(device_id):
     device = g.user.devices.filter_by(device_id=device_id).first()
@@ -24,7 +24,7 @@ def get(device_id):
     return jsonify(device_id=device.device_id, name=device.name)
 
 
-@bp.route('/devices/<device_id>', methods=['PUT'])
+@bp.route('/<device_id>', methods=['PUT'])
 @auth.login_required
 def update(device_id):
     device = g.user.devices.filter_by(device_id=device_id).first()
@@ -37,7 +37,7 @@ def update(device_id):
     return '', 204
 
 
-@bp.route('/devices', methods=['POST'])
+@bp.route('/', methods=['POST'])
 @auth.login_required
 def create():
     device = get_json_params()

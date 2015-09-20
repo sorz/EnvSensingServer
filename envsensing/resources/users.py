@@ -7,7 +7,7 @@ from . import auth, get_json_params, APIException
 
 bp = Blueprint("users", __name__)
 
-@bp.route('/users', methods=['POST'])
+@bp.route('/', methods=['POST'])
 def new_user():
     user = get_json_params()
 
@@ -20,10 +20,4 @@ def new_user():
     db.session.add(user)
     db.session.commit()
     return '', 204
-
-
-@bp.route('/token', methods=['GET'])
-@auth.login_required
-def get_token():
-    return jsonify(token=g.user.generate_token())
 
