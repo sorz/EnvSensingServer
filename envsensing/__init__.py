@@ -18,6 +18,7 @@ app.register_blueprint(home)
 
 # Register APIs
 API_PREFIX = '/api'
-from .resources import users, devices
+from .resources import users, devices, measures
 app.register_blueprint(users.bp, url_prefix=API_PREFIX)
 app.register_blueprint(devices.bp, url_prefix=API_PREFIX)
+app.register_blueprint(measures.bp, url_prefix=API_PREFIX)

@@ -1,4 +1,4 @@
-from .. import app, db
+from .. import db
 
 
 class Device(db.Model):
@@ -6,6 +6,8 @@ class Device(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     device_id = db.Column(db.String(16))
     name = db.Column(db.String(30))
+
+    devices = db.relationship('MeasurePoint', backref='device', lazy='dynamic')
 
 
     def __init__(self, user, device_id, name):
