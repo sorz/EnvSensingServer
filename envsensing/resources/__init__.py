@@ -25,7 +25,7 @@ class APIException(Exception):
     # http://flask.pocoo.org/docs/0.10/patterns/apierrors/
     def __init__(self, message, status_code=400, payload=None):
         super().__init__()
-        self.message = message
+        self.message = str(message)
         self.status_code = status_code
         self.payload = payload
 
