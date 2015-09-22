@@ -1,0 +1,15 @@
+URL = "https://example.com/api/"
+
+user = dict(username="test", email="test@test.com", password="123456")
+requests.post(URL + 'users/', json=user)
+
+token = requests.get(URL + 'token/', auth=("test", "123456")).json()['token']
+token = (token, '')
+
+requests.post(URL + 'devices/abcd/', auth=token, json=dict(name="Test Device"))
+requests.get(URL + 'devices/', auth=token).json()
+requests.get(URL + 'devices/abcd/', auth=token).json()
+
+measure = dict(timestamp=612892800, longitude=116.3975, latitude=39.9087, accuracy=100)
+measure['values'] = dict(Temperature=273.15, Humidity=12.3, Pressure=1234, Monoxide=1, OxidizingGas=2, ReducingGas=3)
+requests.post(URL + 'devices/abcd/measures/', auth=token, json=measure)
