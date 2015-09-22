@@ -15,7 +15,7 @@ def index():
     return jsonify(devices=devices)
 
 
-@bp.route('/<device_id>', methods=['GET'])
+@bp.route('/<device_id>/', methods=['GET'])
 @auth.login_required
 def get(device_id):
     device = g.user.devices.filter_by(device_id=device_id).first()
@@ -24,7 +24,7 @@ def get(device_id):
     return jsonify(device_id=device.device_id, name=device.name)
 
 
-@bp.route('/<device_id>', methods=['PUT'])
+@bp.route('/<device_id>/', methods=['PUT'])
 @auth.login_required
 def update(device_id):
     device = g.user.devices.filter_by(device_id=device_id).first()
@@ -37,15 +37,15 @@ def update(device_id):
     return '', 204
 
 
-@bp.route('/', methods=['POST'])
+@bp.route('/<device_id>/', methods=['POST'])
 @auth.login_required
-def create():
+def create(device_id):
     device = get_json_params()
     if g.user.devices.filter_by(
-            device_id=device['device_id']).first() is not None:
+            device_id=device_id).first() is not None:
         raise APIException('Device has been registered.')
 
-    device = Device(g.user, device['device_id'], device['name'])
+    device = Device(g.user, device_id, device['name'])
     db.session.add(device)
     db.session.commit()
     return '', 204
