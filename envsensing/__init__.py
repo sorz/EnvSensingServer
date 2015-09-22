@@ -22,4 +22,5 @@ from .resources import users, token, devices, measures
 app.register_blueprint(users.bp, url_prefix=API_PREFIX + '/users')
 app.register_blueprint(token.bp, url_prefix=API_PREFIX + '/token')
 app.register_blueprint(devices.bp, url_prefix=API_PREFIX + '/devices')
-app.register_blueprint(measures.bp, url_prefix=API_PREFIX + '/measures')
+app.register_blueprint(measures.bp,
+        url_prefix=API_PREFIX + '/devices/<device_id>/measures')
