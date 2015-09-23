@@ -27,11 +27,13 @@ def get(device_id):
 @bp.route('/<device_id>/', methods=['PUT'])
 @auth.login_required
 def update(device_id):
+    name = get_json_params()['name']
     device = g.user.devices.filter_by(device_id=device_id).first()
     if device is None:
-        raise APIException("Device not found", 404)
+        device = Device(g.user, device_id, name)
+    else:
+        device.name = name
 
-    device.name = get_json_params()['name']
     db.session.add(device)
     db.session.commit()
     return '', 204
