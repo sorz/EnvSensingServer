@@ -43,9 +43,12 @@ def create():
 
     try:
         for m in measures:
-            # TODO: ignore existed value.
             point = MeasurePoint(g.device, m['timestamp'], m['longitude'],
                                  m['latitude'], m['accuracy'])
+            # Use merge() instead of add() to eliminate duplication.
+            # Reference:
+            # http://docs.sqlalchemy.org/en/rel_0_9/orm/
+            # session_state_management.html#merging
             db.session.merge(point)
             for sensor_type, value in m['values'].items():
                 db.session.merge(MeasureValue(point, sensor_type, value))

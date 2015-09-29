@@ -8,18 +8,15 @@ SENSOR_NAMES = ['Temperature', 'Humidity', 'Pressure', 'Monoxide',
                 'OxidizingGas', 'ReducingGas']
 
 class MeasurePoint(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    device_id = db.Column(db.Integer, db.ForeignKey('device.id'))
-    timestamp = db.Column(db.DateTime)
+    device_id = db.Column(db.Integer, db.ForeignKey('device.id'),
+                          primary_key=True)
+    timestamp = db.Column(db.DateTime, primary_key=True)
     longitude = db.Column(db.Float)
     latitude = db.Column(db.Float)
     accuracy = db.Column(db.Float)
     is_private = db.Column(db.Boolean, default=False)
 
     values = db.relationship('MeasureValue', backref='measure_point', lazy='dynamic')
-    __table_args__ = (
-            db.UniqueConstraint("device_id", "timestamp"),
-        )
 
 
     def __init__(self, device, timestamp, longitude, latitude, accuracy,
@@ -38,18 +35,22 @@ class MeasurePoint(db.Model):
 
 
 class MeasureValue(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    measure_point_id = db.Column(db.Integer, db.ForeignKey('measure_point.id'))
-    sensor_type = db.Column(db.Integer)
+    device_id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, primary_key=True)
+    sensor_type = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.Float)
 
+    # Reference:
+    # http://docs.sqlalchemy.org/en/rel_1_0/core/constraints.html
     __table_args__ = (
-            db.UniqueConstraint("measure_point_id", "sensor_type"),
+            db.ForeignKeyConstraint(['device_id', 'timestamp'],
+                    ['measure_point.device_id', 'measure_point.timestamp']),
         )
 
 
     def __init__(self, measure_point, sensor_type, value):
-        self.measure_point_id = measure_point.id
+        self.device_id = measure_point.device_id
+        self.timestamp = measure_point.timestamp
         self.value = value
         if isinstance(sensor_type, str):
             if sensor_type not in SENSOR_NAMES:
