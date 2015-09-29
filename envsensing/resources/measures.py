@@ -46,9 +46,9 @@ def create():
             # TODO: ignore existed value.
             point = MeasurePoint(g.device, m['timestamp'], m['longitude'],
                                  m['latitude'], m['accuracy'])
-            db.session.add(point)
+            db.session.merge(point)
             for sensor_type, value in m['values'].items():
-                db.session.add(MeasureValue(point, sensor_type, value))
+                db.session.merge(MeasureValue(point, sensor_type, value))
     except KeyError as e:
         raise APIException('JSON format error: %s not found.' % e)
     except ValueError as e:

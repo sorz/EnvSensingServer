@@ -17,6 +17,9 @@ class MeasurePoint(db.Model):
     is_private = db.Column(db.Boolean, default=False)
 
     values = db.relationship('MeasureValue', backref='measure_point', lazy='dynamic')
+    __table_args__ = (
+            db.UniqueConstraint("device_id", "timestamp"),
+        )
 
 
     def __init__(self, device, timestamp, longitude, latitude, accuracy,
@@ -39,6 +42,10 @@ class MeasureValue(db.Model):
     measure_point_id = db.Column(db.Integer, db.ForeignKey('measure_point.id'))
     sensor_type = db.Column(db.Integer)
     value = db.Column(db.Float)
+
+    __table_args__ = (
+            db.UniqueConstraint("measure_point_id", "sensor_type"),
+        )
 
 
     def __init__(self, measure_point, sensor_type, value):
