@@ -12,9 +12,9 @@ def new_user():
     user = get_json_params()
 
     if User.query.filter_by(username=user['username']).first() is not None:
-        raise APIException('Username exist.')
+        raise APIException('Username exist, please try another one or login.')
     if User.query.filter_by(email=user['email']).first() is not None:
-        raise APIException('Email exist.')
+        raise APIException('Email exist, please try another one or login.')
 
     user = User(user['username'], user['email'], user['password'])
     db.session.add(user)
