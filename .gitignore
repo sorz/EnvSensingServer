@@ -1,5 +1,6 @@
 instance/
 sqlite.db
+envsensing/bower_components/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,0 +1,8 @@
+{
+  "name": "EnvSensing",
+  "homepage": "https://github.com/sorz/EnvSensingServer",
+  "description": "Environmental Sensing System",
+  "dependencies": {
+    "polymer": "~1.2.3"
+  }
+}

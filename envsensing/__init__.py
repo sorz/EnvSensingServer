@@ -1,6 +1,8 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.bcrypt import Bcrypt
+from flask.ext.bower import Bower
+
 
 app = Flask(__name__, instance_relative_config=True)
 
@@ -11,6 +13,7 @@ app.config.from_pyfile('config.py')
 # Load extension
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+Bower(app)
 
 # Register views
 from .views.home import home

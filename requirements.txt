@@ -1,5 +1,6 @@
 Flask==0.10.1
 Flask-Bcrypt==0.6.2
+Flask-Bower==1.2.1
 Flask-HTTPAuth==2.6.0
 Flask-SQLAlchemy==2.0
 itsdangerous==0.24
