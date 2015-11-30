@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}EnvSensing{% endblock %}
+
+{% block head %}
+  <link rel="import" href="{{ url_for('bower.static', filename='polymer/polymer.html') }}">
+  <link rel="import" href="{{ url_for('bower.static', filename='paper-button/paper-button.html') }}">
+{% endblock %}
+
+{% block body %}
+  <paper-button toggles>Toggle-able button</paper-button>
+{% endblock %}

@@ -3,6 +3,7 @@
   "homepage": "https://github.com/sorz/EnvSensingServer",
   "description": "Environmental Sensing System",
   "dependencies": {
-    "polymer": "~1.2.3"
+    "polymer": "~1.2.3",
+    "paper-button": "PolymerElements/paper-button#~1.0.8"
   }
 }
