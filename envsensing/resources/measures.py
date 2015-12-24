@@ -7,7 +7,7 @@ from ..models.measure import MeasurePoint, MeasureValue
 from . import auth, get_json_params, APIException
 
 
-bp = Blueprint("measures", __name__)
+bp = Blueprint("api_measures", __name__)
 
 def device_context(f):
     # Reference:

@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, g
 from . import auth
 
 
-bp = Blueprint("token", __name__)
+bp = Blueprint("api_token", __name__)
 
 @bp.route('/', methods=['GET'])
 @auth.login_required

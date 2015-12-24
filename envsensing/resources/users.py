@@ -5,7 +5,7 @@ from ..models.user import User
 from . import auth, get_json_params, APIException
 
 
-bp = Blueprint("users", __name__)
+bp = Blueprint("api_users", __name__)
 
 @bp.route('/', methods=['POST'])
 def new_user():

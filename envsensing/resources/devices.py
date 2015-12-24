@@ -5,7 +5,7 @@ from ..models.device import Device
 from . import auth, get_json_params, APIException
 
 
-bp = Blueprint("devices", __name__)
+bp = Blueprint("api_devices", __name__)
 
 @bp.route('/', methods=['GET'])
 @auth.login_required

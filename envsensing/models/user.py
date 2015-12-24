@@ -2,7 +2,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, SignatureExpired
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from .. import app, db, bcrypt
+from .. import app, db, bcrypt, login_manager
 
 
 class User(db.Model):
@@ -52,6 +52,40 @@ class User(db.Model):
         return User.query.get(data['id'])
 
 
+    def get_id():
+        """Required by Flask-Login."""
+        return str(self.id)
+
+
+    @hybrid_property
+    def is_authenticated(self):
+        """Required by Flask-User."""
+        # All users in database are authenticated.
+        return True
+
+
+    @hybrid_property
+    def is_active(self):
+        """Required by Flask-User."""
+        # All users in database are actived.
+        return True
+
+
+    @hybrid_property
+    def is_anonymous(self):
+        """Required by Flask-User."""
+        # Not users in database are anonymous.
+        return False
+
+
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    """Flask-User's callback function,
+    used to reload the user object from the user ID stored in the session.
+    """
+    return User.query.get(user_id)
 
