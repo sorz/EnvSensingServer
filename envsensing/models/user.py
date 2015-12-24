@@ -52,7 +52,7 @@ class User(db.Model):
         return User.query.get(data['id'])
 
 
-    def get_id():
+    def get_id(self):
         """Required by Flask-Login."""
         return str(self.id)
 

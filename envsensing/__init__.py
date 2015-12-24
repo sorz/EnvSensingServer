@@ -17,7 +17,7 @@ login_manager = LoginManager(app)
 # Register views
 from .views import home, users
 app.register_blueprint(home.bp)
-app.register_blueprint(users.bp)
+app.register_blueprint(users.bp, url_prefix='/users')
 
 
 # Register APIs
