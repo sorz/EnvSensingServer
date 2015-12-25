@@ -1,11 +1,12 @@
 from flask.ext.wtf import Form
-from wtforms import TextField, PasswordField, validators
+from wtforms import TextField, PasswordField, SubmitField, validators
 
 from ..models.user import User
 
 class LoginForm(Form):
     username = TextField('Username', [validators.Length(max=30)])
     password = PasswordField('Password', [validators.Required()])
+    submit = SubmitField('Log in')
 
     def validate(self):
         if super().validate():
