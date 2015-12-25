@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask.ext.login import login_required, login_user, logout_user
 
 from ..models.user import User
@@ -16,6 +16,7 @@ def login():
 
         next = request.args.get('next')
         # TODO: validate the next
+        flash('Welcome, %s.' % form.user.username, 'success')
         return redirect(next or url_for('home.index'))
 
     return render_template('users/login.html', form=form)

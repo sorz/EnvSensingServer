@@ -16,5 +16,8 @@ class LoginForm(Form):
                     self.user = user
                     return True
         self.user = None
+        error = 'Username and/or password not matched.'
+        self.username.errors.append(error)
+        self.password.errors.append(error)
         return False
 

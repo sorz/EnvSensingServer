@@ -1,3 +1,4 @@
+{% import 'bootstrap/utils.html' as utils %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -13,6 +14,7 @@
     {% block head %}{% endblock %}
   </head>
   <body>
+    {{ utils.flashed_messages(dismissible=True) }}
     {% block body %}{% endblock %}
     <script src="https://code.jquery.com/jquery-1.11.3.min.js"
       integrity="sha384-+54fLHoW8AHu3nHtUxs9fW2XKOZ2ZwKHB5olRtKSDTKJIb1Na1EceFZMS8E72mzW" crossorigin="anonymous">
