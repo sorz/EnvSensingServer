@@ -1,0 +1,11 @@
+{% extends "front.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block title %}EnvSensing{% endblock %}
+
+{% block main %}
+<p>Username: {{ current_user.username }}
+<p>E-mail: {{ current_user.email }}
+<p>Registered devices:
+<p>Uploaded data:
+{% endblock %}
+

@@ -17,7 +17,7 @@ def login():
         next = request.args.get('next')
         # TODO: validate the next
         flash('Welcome, %s.' % form.user.username, 'success')
-        return redirect(next or url_for('home.index'))
+        return redirect(next or url_for('users.me'))
 
     return render_template('users/login.html', form=form)
 
@@ -26,5 +26,12 @@ def login():
 @login_required
 def logout():
     logout_user()
+    flash('You have logged out.', 'success')
     return redirect(url_for('home.index'))
+
+
+@bp.route('/me/')
+@login_required
+def me():
+    return render_template('users/me.html')
 
