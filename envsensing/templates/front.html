@@ -4,6 +4,10 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='front.css') }}">
 {% endblock %}
 
+{% block foot %}
+  <script src="{{ url_for('static', filename='front.js') }}"></script>
+{% endblock %}
+
 {% block body %}
 <div class="container">
   <!-- Navbar -->
@@ -17,16 +21,16 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">EnvSensing</a>
+        <a class="navbar-brand" href="{{ url_for('home.index') }}">EnvSensing</a>
       </div>
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-          <li class="active"><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
+          <li class="nav-home"><a href="{{ url_for('home.index') }}">Home</a></li>
+          <li class="nav-about"><a href="#">About</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           {% if current_user.is_authenticated %}
-          <li class="dropdown">
+          <li class="nav-users dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                 aria-expanded="false">{{ current_user.username }}
                 <span class="caret"></span></a>
@@ -36,7 +40,7 @@
             </ul>
           </li>
           {% else %}
-          <li><a href="{{ url_for('users.login') }}">Log in</a></li>
+          <li class="nav-login"><a href="{{ url_for('users.login') }}">Log in</a></li>
           {% endif %}
         </ul>
       </div><!--/.nav-collapse -->
