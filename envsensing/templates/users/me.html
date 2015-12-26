@@ -6,6 +6,13 @@
 <p>Username: {{ current_user.username }}
 <p>E-mail: {{ current_user.email }}
 <p>Registered devices:
-<p>Uploaded data:
+<ul>
+  {% for device in current_user.devices.all() %}
+  <li>{{ device.name }} ({{ device.device_id }})<br>
+    {{ device.measure_points.count() }} records uploaded.
+  </li>
+  {% endfor %}
+</ul>
+
 {% endblock %}
 
