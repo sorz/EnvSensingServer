@@ -31,7 +31,7 @@ class MeasurePoint(db.Model):
 
 
     def __repr__(self):
-        return '<MeasurePoint %r>' % self.id
+        return '<MeasurePoint %s@%s>' % (self.device_id, self.timestamp)
 
 
 class MeasureValue(db.Model):

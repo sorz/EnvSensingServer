@@ -7,7 +7,7 @@ class Device(db.Model):
     device_id = db.Column(db.String(16))
     name = db.Column(db.String(30))
 
-    devices = db.relationship('MeasurePoint', backref='device', lazy='dynamic')
+    measure_points = db.relationship('MeasurePoint', backref='device', lazy='dynamic')
 
 
     def __init__(self, user, device_id, name):
