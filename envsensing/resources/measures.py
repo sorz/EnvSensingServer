@@ -27,7 +27,16 @@ def device_context(f):
 @login_required
 @device_context
 def index():
-    raise APIException('Not yet implemented.')
+    points = g.device.measure_points.all()
+    measures = []
+    for p in points:
+        item = dict(timestamp=p.timestamp.timestamp(),
+                    latitude=p.latitude, longitude=p.longitude,
+                    accuracy=p.accuracy, values=[])
+        for value in p.values.all():
+            item['values'].append(dict(type=value.sensor_type, value=value.value))
+        measures.append(item)
+    return jsonify(device_id=g.device.device_id, measures=measures)
 
 
 @bp.route('/', methods=['POST'])
