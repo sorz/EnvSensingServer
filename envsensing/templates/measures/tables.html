@@ -3,6 +3,15 @@
 {% block title %}EnvSensing{% endblock %}
 
 {% block main %}
+  <form id="filter">
+    <select class="form-control" id="device" disabled>
+      <option disabled selected>-- select a device --</option>
+      {% for device in devices %}
+      <option value="{{ device.device_id }}">{{ device.name }}
+        ({{ device.device_id }})</option>
+      {% endfor %}
+    </select>
+  </form>
   <div id="table">Loading...</div>
 
 {% endblock %}
@@ -10,14 +19,41 @@
 {% block foot %}
 <script src="https://www.google.com/jsapi"></script>
 <script>
-  google.load("visualization", "1", {packages:["timeline"]});
-  google.setOnLoadCallback(drawTable);
+  var $form = $('form#filter');
+  var $device = $('select#device');
+  google.load("visualization", "1.1", {packages:["table"]});
+  google.setOnLoadCallback(function() {
+    $form.children().removeProp('disabled');
+  });
 
-  function drawTable() {
-    var table = new google.visualization.Timeline($('#table')[0]);
+  function drawTable(device_id, callback_finish) {
+    var table = new google.visualization.Table($('#table')[0]);
     var data = new google.visualization.DataTable();
-    console.log('test');
+    data.addColumn('datetime', 'Time');
+    data.addColumn('number', 'Latitude');
+    data.addColumn('number', 'Longitude');
+    data.addColumn('number', 'Accuracy (m)');
+
+    $.getJSON('/api/devices/' + device_id + '/measures/',
+      function(resp) {
+        for (var i=0; i<resp.measures.length; ++i) {
+          var m = resp.measures[i];
+          var time = new Date(m.timestamp * 1000);
+          data.addRow([time, m.latitude, m.longitude, m.accuracy]);
+        }
+
+        table.draw(data, {page: 'enable', pageSize: 30,
+          sortColumn: 0, sortAscending: false});
+      }).done(callback_finish);
   }
+
+  $form.change(function() {
+    var device = $device.val();
+    $form.children().prop('disabled', true);
+    drawTable(device, function() {
+      $form.children().removeProp('disabled');
+    });
+  });
 
 </script>
 {% endblock %}

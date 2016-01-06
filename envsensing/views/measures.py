@@ -18,5 +18,6 @@ def index():
 @bp.route('/tables/')
 @login_required
 def tables():
-    return render_template('measures/tables.html')
+    devices = current_user.devices.all()
+    return render_template('measures/tables.html', devices=devices)
 
