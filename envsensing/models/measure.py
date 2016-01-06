@@ -60,5 +60,5 @@ class MeasureValue(db.Model):
 
 
     def __repr__(self):
-        return '<MeasureValue %s: %.2f >' % (self.id, self.value)
+        return '<MeasureValue %s: %.2f >' % (self.device_id, self.value)
 
