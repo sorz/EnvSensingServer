@@ -3,7 +3,6 @@ Flask==0.10.1
 Flask-Bcrypt==0.6.2
 Flask-Bootstrap==3.3.5.7
 Flask-Bower==1.2.1
-Flask-HTTPAuth==2.6.0
 Flask-Login==0.3.2
 Flask-SQLAlchemy==2.0
 Flask-WTF==0.12

@@ -1,6 +1,7 @@
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from itsdangerous import BadSignature, SignatureExpired
 from sqlalchemy.ext.hybrid import hybrid_property
+from base64 import b64decode
 
 from .. import app, db, bcrypt, login_manager
 
@@ -88,4 +89,26 @@ def load_user(user_id):
     used to reload the user object from the user ID stored in the session.
     """
     return User.query.get(user_id)
+
+
+@login_manager.request_loader
+def load_user_from_request(request):
+    """Add basic auth for API call."""
+    auth = request.headers.get('Authorization')
+    if auth is not None:
+        auth = auth.replace('Basic ', '', 1)
+        try:
+            token_or_username, password = b64decode(auth).decode().split(':', 1)
+        except TypeError:
+            return
+        print(token_or_username, password)
+
+        # Treat it as token first. If fail, try username & password auth.
+        user = User.verify_token(token_or_username)
+        if user is not None:
+            return user
+        else:
+            user = User.query.filter_by(username=token_or_username).first()
+            if user.verify_password(password):
+                return user
 

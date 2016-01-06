@@ -1,10 +1,11 @@
 from functools import wraps
 from flask import Blueprint, request, jsonify, g
+from flask.ext.login import login_required, current_user
 
 from .. import db
 from ..models.device import Device
 from ..models.measure import MeasurePoint, MeasureValue
-from . import auth, get_json_params, APIException
+from . import get_json_params, APIException
 
 
 bp = Blueprint("api_measures", __name__)
@@ -15,7 +16,7 @@ def device_context(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         device_id = kwargs.pop('device_id')
-        g.device = g.user.devices.filter_by(device_id=device_id).first()
+        g.device = current_user.devices.filter_by(device_id=device_id).first()
         if g.device is None:
             raise APIException('Device not found.', 404)
         return f(*args, **kwargs)
@@ -23,14 +24,14 @@ def device_context(f):
 
 
 @bp.route('/', methods=['GET'])
-@auth.login_required
+@login_required
 @device_context
 def index():
     raise APIException('Not yet implemented.')
 
 
 @bp.route('/', methods=['POST'])
-@auth.login_required
+@login_required
 @device_context
 def create():
     measures = request.get_json()

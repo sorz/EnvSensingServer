@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, g
 
 from .. import db
 from ..models.user import User
-from . import auth, get_json_params, APIException
+from . import get_json_params, APIException
 
 
 bp = Blueprint("api_users", __name__)

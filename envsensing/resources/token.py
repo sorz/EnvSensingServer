@@ -1,12 +1,11 @@
 from flask import Blueprint, jsonify, g
-
-from . import auth
+from flask.ext.login import login_required, current_user
 
 
 bp = Blueprint("api_token", __name__)
 
 @bp.route('/', methods=['GET'])
-@auth.login_required
+@login_required
 def get_token():
-    return jsonify(token=g.user.generate_token())
+    return jsonify(token=current_user.generate_token())
 
