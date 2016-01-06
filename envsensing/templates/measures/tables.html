@@ -19,6 +19,8 @@
 {% block foot %}
 <script src="https://www.google.com/jsapi"></script>
 <script>
+  var SENSOR_NAMES = ['Temperature', 'Humidity', 'Pressure',
+      'Monoxide', 'OxidizingGas', 'ReducingGas']
   var $form = $('form#filter');
   var $device = $('select#device');
   google.load("visualization", "1.1", {packages:["table"]});
@@ -33,13 +35,28 @@
     data.addColumn('number', 'Latitude');
     data.addColumn('number', 'Longitude');
     data.addColumn('number', 'Accuracy (m)');
+    data.addColumn('number', 'Temperature');
+    data.addColumn('number', 'Humidity');
+    data.addColumn('number', 'Pressure');
+    data.addColumn('number', 'Monoxide');
+    data.addColumn('number', 'Oxidizing Gas');
+    data.addColumn('number', 'Reducing Gas');
 
     $.getJSON('/api/devices/' + device_id + '/measures/',
       function(resp) {
+        data.addRows(resp.measures.length);
         for (var i=0; i<resp.measures.length; ++i) {
           var m = resp.measures[i];
           var time = new Date(m.timestamp * 1000);
-          data.addRow([time, m.latitude, m.longitude, m.accuracy]);
+          data.setCell(i, 0, time);
+          data.setCell(i, 1, m.latitude);
+          data.setCell(i, 2, m.longitude);
+          data.setCell(i, 3, m.accuracy);
+
+          for (var j=0; j<m.values.length; ++j) {
+            var column = 4 + SENSOR_NAMES.indexOf(m.values[j].type);
+            data.setCell(i, column, m.values[j].value);
+          }
         }
 
         table.draw(data, {page: 'enable', pageSize: 30,
