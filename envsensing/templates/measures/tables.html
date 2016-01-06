@@ -1,0 +1,23 @@
+{% extends "front.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block title %}EnvSensing{% endblock %}
+
+{% block main %}
+  <div id="table">Loading...</div>
+
+{% endblock %}
+
+{% block foot %}
+<script src="https://www.google.com/jsapi"></script>
+<script>
+  google.load("visualization", "1", {packages:["timeline"]});
+  google.setOnLoadCallback(drawTable);
+
+  function drawTable() {
+    var table = new google.visualization.Timeline($('#table')[0]);
+    var data = new google.visualization.DataTable();
+    console.log('test');
+  }
+
+</script>
+{% endblock %}

@@ -17,9 +17,10 @@ login_manager = LoginManager(app)
 Bootstrap(app)
 
 # Register views
-from .views import home, users
+from .views import home, users, measures
 app.register_blueprint(home.bp)
 app.register_blueprint(users.bp, url_prefix='/users')
+app.register_blueprint(measures.bp, url_prefix='/measures')
 
 
 # Register APIs
