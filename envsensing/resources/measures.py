@@ -34,7 +34,7 @@ def index():
                     latitude=p.latitude, longitude=p.longitude,
                     accuracy=p.accuracy, values=[])
         for value in p.values.all():
-            item['values'].append(dict(type=value.sensor_type, value=value.value))
+            item['values'].append(dict(type=value.type_name, value=value.value))
         measures.append(item)
     return jsonify(device_id=g.device.device_id, measures=measures)
 

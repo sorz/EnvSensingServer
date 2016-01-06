@@ -1,4 +1,5 @@
 from datetime import datetime
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from .. import db
 
@@ -57,6 +58,16 @@ class MeasureValue(db.Model):
                 raise ValueError('Unknown sensor type: %s' % sensor_type)
             sensor_type = SENSOR_NAMES.index(sensor_type)
         self.sensor_type = sensor_type
+
+
+    @hybrid_property
+    def type_name(self):
+        return SENSOR_NAMES[self.sensor_type]
+
+
+    @type_name.setter
+    def set_type_name(self, name):
+        self.sensor_type = SENSOR_NAMES.index(sensor_type)
 
 
     def __repr__(self):
