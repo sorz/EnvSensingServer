@@ -35,9 +35,9 @@
     data.addColumn('number', 'Latitude');
     data.addColumn('number', 'Longitude');
     data.addColumn('number', 'Accuracy (m)');
-    data.addColumn('number', 'Temperature');
-    data.addColumn('number', 'Humidity');
-    data.addColumn('number', 'Pressure');
+    data.addColumn('number', 'Temperature (K)');
+    data.addColumn('number', 'Humidity (%)');
+    data.addColumn('number', 'Pressure (Pa)');
     data.addColumn('number', 'Monoxide');
     data.addColumn('number', 'Oxidizing Gas');
     data.addColumn('number', 'Reducing Gas');
@@ -58,6 +58,10 @@
             data.setCell(i, column, m.values[j].value);
           }
         }
+
+        var formatter = new google.visualization.NumberFormat({pattern: '#.#'});
+        for (var i=3; i<10; i++)
+          formatter.format(data, i);
 
         table.draw(data, {page: 'enable', pageSize: 30,
           sortColumn: 0, sortAscending: false});
