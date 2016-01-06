@@ -1,6 +1,7 @@
-from flask import g, jsonify, request
+from functools import wraps
+from flask import jsonify, request
 
-from .. import app
+from .. import app, csrf
 from ..models.user import User
 
 
@@ -25,6 +26,15 @@ def handle_api_exception(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
+
+def csrf_protect(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not hasattr(request, 'with_basic_auth'):
+            csrf.protect()
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 # Reference:

@@ -5,7 +5,7 @@ from flask.ext.login import login_required, current_user
 from .. import db
 from ..models.device import Device
 from ..models.measure import MeasurePoint, MeasureValue
-from . import get_json_params, APIException
+from . import csrf_protect, get_json_params, APIException
 
 
 bp = Blueprint("api_measures", __name__)
@@ -32,6 +32,7 @@ def index():
 
 @bp.route('/', methods=['POST'])
 @login_required
+@csrf_protect
 @device_context
 def create():
     measures = request.get_json()

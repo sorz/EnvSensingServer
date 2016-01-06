@@ -101,14 +101,15 @@ def load_user_from_request(request):
             token_or_username, password = b64decode(auth).decode().split(':', 1)
         except TypeError:
             return
-        print(token_or_username, password)
 
         # Treat it as token first. If fail, try username & password auth.
         user = User.verify_token(token_or_username)
         if user is not None:
+            request.with_basic_auth = True
             return user
         else:
             user = User.query.filter_by(username=token_or_username).first()
             if user.verify_password(password):
+                request.with_basic_auth = True
                 return user
 

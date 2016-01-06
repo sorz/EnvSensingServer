@@ -3,7 +3,7 @@ from flask.ext.login import login_required, current_user
 
 from .. import db
 from ..models.device import Device
-from . import get_json_params, APIException
+from . import csrf_protect, get_json_params, APIException
 
 
 bp = Blueprint("api_devices", __name__)
@@ -27,6 +27,7 @@ def get(device_id):
 
 @bp.route('/<device_id>/', methods=['PUT'])
 @login_required
+@csrf_protect
 def update(device_id):
     name = get_json_params()['name']
     device = current_user.devices.filter_by(device_id=device_id).first()
@@ -42,6 +43,7 @@ def update(device_id):
 
 @bp.route('/<device_id>/', methods=['POST'])
 @login_required
+@csrf_protect
 def create(device_id):
     device = get_json_params()
     if current_user.devices.filter_by(
