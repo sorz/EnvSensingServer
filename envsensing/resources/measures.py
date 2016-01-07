@@ -37,12 +37,20 @@ def index():
         date_to += timedelta(days=1)
     except ValueError:
         date_to = None
+    try:
+        limit = int(request.args.get('limit'))
+        if limit <= 0:
+            raise ValueError()
+    except ValueError:
+        limit = None
 
     points = g.device.measure_points.filter()
     if date_from is not None:
         points = points.filter(MeasurePoint.timestamp >= date_from)
     if date_to is not None:
         points = points.filter(MeasurePoint.timestamp < date_to)
+    if limit is not None:
+        points = points.limit(limit)
 
     measures = []
     for p in points:

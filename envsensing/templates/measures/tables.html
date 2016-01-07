@@ -14,6 +14,9 @@
     <input type="date" id="date-from" placeholder="yyyy-mm-dd">
     <label for="date-to">To</label>
     <input type="date" id="date-to" placeholder="yyyy-mm-dd">
+    <label for="limit">Limit</label>
+    <input type="number" id="limit" min="1" value="1000"
+        title="Maximum number of records to display" placeholder="unlimited">
     <button id="show" class="btn btn-default" disabled>Show</button>
   </form>
   <div id="table">Please select filters on above...</div>
@@ -27,8 +30,9 @@
   var $form = $('form#filter');
   var $device = $('select#device');
   var $show = $('button#show');
-  var $date_from = $('input#date-from');
-  var $date_to = $('input#date-to');
+  var $dateFrom = $('input#date-from');
+  var $dateTo = $('input#date-to');
+  var $limit = $('input#limit');
 
   google.load("visualization", "1.1", {packages:["table"]});
   google.setOnLoadCallback(function() {
@@ -50,7 +54,7 @@
     data.addColumn('number', 'Reducing Gas');
 
     var url = '/api/devices/' + device_id + '/measures/';
-    var args = { from: $date_from.val(), to: $date_to.val() };
+    var args = { from: $dateFrom.val(), to: $dateTo.val(), limit: $limit.val() };
     $.getJSON(url, args, function(resp) {
       data.addRows(resp.measures.length);
       for (var i=0; i<resp.measures.length; ++i) {
