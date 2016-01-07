@@ -21,3 +21,9 @@ def tables():
     devices = current_user.devices.all()
     return render_template('measures/tables.html', devices=devices)
 
+
+@bp.route('/maps/')
+@login_required
+def maps():
+    devices = current_user.devices.all()
+    return render_template('measures/maps.html', devices=devices)
