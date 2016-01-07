@@ -49,9 +49,9 @@
     data.addColumn('number', 'Temperature (K)');
     data.addColumn('number', 'Humidity (%)');
     data.addColumn('number', 'Pressure (Pa)');
-    data.addColumn('number', 'Monoxide');
-    data.addColumn('number', 'Oxidizing Gas');
-    data.addColumn('number', 'Reducing Gas');
+    data.addColumn('number', 'Monoxide (ppm)');
+    data.addColumn('number', 'Oxidizing Gas (Ohm)');
+    data.addColumn('number', 'Reducing Gas (Ohm)');
 
     var url = '/api/devices/' + device_id + '/measures/';
     var args = { from: $dateFrom.val(), to: $dateTo.val(), limit: $limit.val() };
