@@ -15,6 +15,8 @@
 {{ super() }}
 <script>
   var map;
+  var markers = [];
+
   function initMap() {
     map = new google.maps.Map($('#map')[0], {
       center: {lat: 22.18, lng: 113.55}, zoom: 12
@@ -22,8 +24,22 @@
     readyToGetDataset();
   }
 
+  function clearMarkers() {
+    for (var i = 0; i < markers.length; i++)
+      markers[i].setMap(null);
+  }
+
   onDatasetChanged(function(measures) {
-    // TODO
+    clearMarkers();
+
+    markers = new Array(measures.length);
+    for (var i=0; i<measures.length; i++) {
+      markers[i] = new google.maps.Marker({
+        position: { lat: measures[i].latitude, lng: measures[i].longitude },
+        title: 'item #' + i
+      });
+      markers[i].setMap(map);
+    }
   });
 </script>
 <script async defer
