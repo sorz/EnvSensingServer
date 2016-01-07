@@ -1,6 +1,7 @@
 from functools import wraps
 from flask import Blueprint, request, jsonify, g
 from flask.ext.login import login_required, current_user
+from datetime import datetime, timedelta
 
 from .. import db
 from ..models.device import Device
@@ -27,7 +28,22 @@ def device_context(f):
 @login_required
 @device_context
 def index():
-    points = g.device.measure_points.all()
+    try:
+        date_from = datetime.strptime(request.args.get('from'), '%Y-%m-%d')
+    except ValueError:
+        date_from = None
+    try:
+        date_to = datetime.strptime(request.args.get('to'), '%Y-%m-%d')
+        date_to += timedelta(days=1)
+    except ValueError:
+        date_to = None
+
+    points = g.device.measure_points.filter()
+    if date_from is not None:
+        points = points.filter(MeasurePoint.timestamp >= date_from)
+    if date_to is not None:
+        points = points.filter(MeasurePoint.timestamp < date_to)
+
     measures = []
     for p in points:
         item = dict(timestamp=p.timestamp.timestamp(),
