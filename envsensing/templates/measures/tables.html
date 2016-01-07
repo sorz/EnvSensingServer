@@ -1,24 +1,7 @@
-{% extends "front.html" %}
-{% import 'bootstrap/wtf.html' as wtf %}
+{% extends "measures/base.html" %}
 {% block title %}EnvSensing{% endblock %}
 
-{% block main %}
-  <form id="filter">
-    <select class="form-control" id="device">
-      {% for device in devices %}
-      <option value="{{ device.device_id }}">{{ device.name }}
-        ({{ device.device_id }})</option>
-      {% endfor %}
-    </select>
-    <label for="date-from">From</label>
-    <input type="date" id="date-from" placeholder="yyyy-mm-dd">
-    <label for="date-to">To</label>
-    <input type="date" id="date-to" placeholder="yyyy-mm-dd">
-    <label for="limit">Limit</label>
-    <input type="number" id="limit" min="1" value="1000"
-        title="Maximum number of records to display" placeholder="unlimited">
-    <button id="show" class="btn btn-default" disabled>Show</button>
-  </form>
+{% block data %}
   <div id="table">Please select filters on above...</div>
 {% endblock %}
 
@@ -26,21 +9,12 @@
 {{ super() }}
 <script src="https://www.google.com/jsapi"></script>
 <script>
-  var SENSOR_NAMES = ['Temperature', 'Humidity', 'Pressure',
-      'Monoxide', 'OxidizingGas', 'ReducingGas']
-  var $form = $('form#filter');
-  var $device = $('select#device');
-  var $show = $('button#show');
-  var $dateFrom = $('input#date-from');
-  var $dateTo = $('input#date-to');
-  var $limit = $('input#limit');
-
   google.load("visualization", "1.1", {packages:["table"]});
   google.setOnLoadCallback(function() {
-    $show.removeProp('disabled');
+    readyToGetDataset();
   });
 
-  function drawTable(device_id, callback_finish) {
+  onDatasetChanged(function(measures) {
     var table = new google.visualization.Table($('#table')[0]);
     var data = new google.visualization.DataTable();
     data.addColumn('datetime', 'Time');
@@ -54,41 +28,27 @@
     data.addColumn('number', 'Oxidizing Gas (Ohm)');
     data.addColumn('number', 'Reducing Gas (Ohm)');
 
-    var url = '/api/devices/' + device_id + '/measures/';
-    var args = { from: $dateFrom.val(), to: $dateTo.val(), limit: $limit.val() };
-    $.getJSON(url, args, function(resp) {
-      data.addRows(resp.measures.length);
-      for (var i=0; i<resp.measures.length; ++i) {
-        var m = resp.measures[i];
-        var time = new Date(m.timestamp * 1000);
-        data.setCell(i, 0, time);
-        data.setCell(i, 1, m.latitude);
-        data.setCell(i, 2, m.longitude);
-        data.setCell(i, 3, m.accuracy);
+    data.addRows(measures.length);
+    for (var i=0; i<measures.length; ++i) {
+      var m = measures[i];
+      var time = new Date(m.timestamp * 1000);
+      data.setCell(i, 0, time);
+      data.setCell(i, 1, m.latitude);
+      data.setCell(i, 2, m.longitude);
+      data.setCell(i, 3, m.accuracy);
 
-        for (var j=0; j<m.values.length; ++j) {
-          var column = 4 + SENSOR_NAMES.indexOf(m.values[j].type);
-          data.setCell(i, column, m.values[j].value);
-        }
+      for (var j=0; j<m.values.length; ++j) {
+        var column = 4 + SENSOR_NAMES.indexOf(m.values[j].type);
+        data.setCell(i, column, m.values[j].value);
       }
+    }
 
-      var formatter = new google.visualization.NumberFormat({pattern: '#.#'});
-      for (var i=3; i<10; i++)
-        formatter.format(data, i);
+    var formatter = new google.visualization.NumberFormat({pattern: '#.#'});
+    for (var i=3; i<10; i++)
+      formatter.format(data, i);
 
-      table.draw(data, {page: 'enable', pageSize: 30,
-        sortColumn: 0, sortAscending: false});
-    }).done(callback_finish);
-  }
-
-  $show.click(function(event) {
-    event.preventDefault();
-    var device = $device.val();
-    $show.prop('disabled', true);
-    drawTable(device, function() {
-      $show.removeProp('disabled');
-    });
+    table.draw(data, {page: 'enable', pageSize: 30,
+      sortColumn: 0, sortAscending: false});
   });
-
 </script>
 {% endblock %}
