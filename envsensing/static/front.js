@@ -6,6 +6,7 @@ function initializeNavbar() {
   var PATH_REGEX_TO_NAME = {
     '^/users/login/': 'login',
     '^/users/': 'users',
+    '^/measures/': 'measures',
     '^/$': 'home'
   };
 

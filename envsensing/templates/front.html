@@ -26,6 +26,16 @@
       <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
           <li class="nav-home"><a href="{{ url_for('home.index') }}">Home</a></li>
+          {% if current_user.is_authenticated %}
+          <li class="nav-measures dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                aria-expanded="false">My Data
+                <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ url_for('measures.tables') }}">Show in Tables</a></li>
+            </ul>
+          </li>
+          {% endif %}
           <li class="nav-about"><a href="#">About</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
@@ -35,7 +45,7 @@
                 aria-expanded="false">{{ current_user.username }}
                 <span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="{{ url_for('users.me') }}">Me</a></li>
+              <li><a href="{{ url_for('users.me') }}">Profile</a></li>
               <li><a href="{{ url_for('users.logout') }}">Log out</a></li>
             </ul>
           </li>
