@@ -33,13 +33,24 @@
     clearMarkers();
 
     markers = new Array(measures.length);
-    for (var i=0; i<measures.length; i++) {
+    measures.forEach(function(m, i) {
       markers[i] = new google.maps.Marker({
-        position: { lat: measures[i].latitude, lng: measures[i].longitude },
+        position: { lat: m.latitude, lng: m.longitude },
         title: 'item #' + i
       });
+      markers[i].addListener('click', function() {
+        var content = new Date(m.timestamp * 1000) + '<br>';
+        content += 'Lat: ' + m.latitude + ', lng: ' + m.longitude + '<br>';
+        m.values.forEach(function(v) {
+          content += v.type + ': ' + v.value + '<br>';
+        });
+        var infowindow = new google.maps.InfoWindow({
+          content: content
+        });
+        infowindow.open(map, this);
+      });
       markers[i].setMap(map);
-    }
+    });
   });
 </script>
 <script async defer
