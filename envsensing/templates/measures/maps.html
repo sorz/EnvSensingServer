@@ -9,13 +9,29 @@
 
 {% block data %}
   <div id="map"></div>
+  <div>
+    <form id="display-options">
+      <select class="form-control" id="heatmap">
+        <option value="">Hide Heatmap</option>
+        <option value="Temperature">Temperature</option>
+        <option value="Humidity">Humidity</option>
+        <option value="Pressure">Pressure</option>
+        <option value="Monoxide">Monoxide</option>
+        <option value="OxidizingGas">Oxidizing Gas</option>
+        <option value="ReducingGas">Reducing Gas</option>
+      </select>
+    </form>
+  </div>
 {% endblock %}
 
 {% block foot %}
 {{ super() }}
 <script>
   var map;
+  var measures;
   var markers = [];
+  var heatmap;
+  var $dimesion = $('#heatmap');
 
   function initMap() {
     map = new google.maps.Map($('#map')[0], {
@@ -24,14 +40,31 @@
     readyToGetDataset();
   }
 
-  function clearMarkers() {
-    for (var i = 0; i < markers.length; i++)
-      markers[i].setMap(null);
+  function drawHeatmap() {
+    var dimesion = $dimesion.val();
+    var heatMapData = [];
+    measures.forEach(function(m) {
+      var val;
+      m.values.some(function(v) {
+        if (v.type == dimesion) {
+          val = v.value;
+          return true;
+        }
+      });
+      if (val == undefined)
+        return;
+      heatMapData.push({
+        location: new google.maps.LatLng(m.latitude, m.longitude),
+        weight: val
+      });
+    });
+    heatmap = new google.maps.visualization.HeatmapLayer({
+      data: heatMapData,
+    });
+    heatmap.setMap(map);
   }
 
-  onDatasetChanged(function(measures) {
-    clearMarkers();
-
+  function drawMarkers() {
     markers = new Array(measures.length);
     measures.forEach(function(m, i) {
       markers[i] = new google.maps.Marker({
@@ -51,9 +84,34 @@
       });
       markers[i].setMap(map);
     });
+  }
+
+  function drawMap() {
+    if (markers)
+      for (var i = 0; i < markers.length; i++)
+        markers[i].setMap(null);
+    if (heatmap)
+      heatmap.setMap(null);
+
+    if (!measures)
+      return;
+
+    console.log($dimesion.val());
+    if ($dimesion.val())
+      drawHeatmap();
+    else
+      drawMarkers();
+  }
+
+  onDatasetChanged(function(measures) {
+    window.measures = measures;
+    drawMap();
   });
+
+  $('form#display-options').change(drawMap);
+
 </script>
 <script async defer
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_Ja3Oxmtdg05gKml206MOx8J0fE-8ndQ&callback=initMap">
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_Ja3Oxmtdg05gKml206MOx8J0fE-8ndQ&callback=initMap&libraries=visualization">
 </script>
 {% endblock %}
