@@ -19,10 +19,11 @@ csrf = CsrfProtect(app)
 Bootstrap(app)
 
 # Register views
-from .views import home, users, measures
+from .views import home, users, measures, analysis
 app.register_blueprint(home.bp)
 app.register_blueprint(users.bp, url_prefix='/users')
 app.register_blueprint(measures.bp, url_prefix='/measures')
+app.register_blueprint(analysis.bp, url_prefix='/analysis')
 
 # Register APIs
 API_PREFIX = '/api'

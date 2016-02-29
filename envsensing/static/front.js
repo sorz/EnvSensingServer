@@ -7,6 +7,7 @@ function initializeNavbar() {
     '^/users/login/': 'login',
     '^/users/': 'users',
     '^/measures/': 'measures',
+    '^/analysis/': 'analysis',
     '^/$': 'home'
   };
 
