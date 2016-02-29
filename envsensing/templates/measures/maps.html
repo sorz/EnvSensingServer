@@ -53,10 +53,7 @@
       });
       if (val == undefined)
         return;
-      heatMapData.push({
-        location: new google.maps.LatLng(m.latitude, m.longitude),
-        weight: val
-      });
+      heatMapData.push(new google.maps.LatLng(m.latitude, m.longitude));
     });
     heatmap = new google.maps.visualization.HeatmapLayer({
       data: heatMapData,
