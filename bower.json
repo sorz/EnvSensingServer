@@ -1,0 +1,6 @@
+{
+  "name": "envsensing",
+  "dependencies": {
+    "js-marker-clusterer": "master"
+  }
+}
