@@ -9,6 +9,13 @@
 {% endblock %}
 
 {% block main %}
+  <form id="filter">
+    <label for="date-from">From</label>
+    <input type="date" id="date-from" placeholder="yyyy-mm-dd">
+    <label for="date-to">To</label>
+    <input type="date" id="date-to" placeholder="yyyy-mm-dd">
+    <button id="update" class="btn btn-default">Update</button>
+  </form>
   <div id="map"></div>
 {% endblock %}
 
@@ -16,13 +23,41 @@
 {{ super() }}
 <script>
   var map;
+  var updateTimer;
+
+  var $dateFrom = $('input#date-from');
+  var $dateTo = $('input#date-to');
 
   function initMap() {
     map = new google.maps.Map($('#map')[0], {
       center: {lat: 22.18, lng: 113.55}, zoom: 12
     });
+
+    map.addListener('bounds_changed', function() {
+      window.clearTimeout(updateTimer);
+      updateTimer = window.setTimeout(function() {
+        console.log('Updating points');
+        console.log(map.getBounds().toJSON());
+        updatePoints();
+      }, 3000);
+    });
   }
 
+  function updatePoints() {
+    var url = 'area/';
+    var args = map.getBounds().toJSON();
+    args.from = $dateFrom.val();
+    args.to = $dateTo.val();
+
+    $.getJSON(url, args, function(resp) {
+      console.log(resp.count);
+    });
+  }
+
+  $('#update').click(function(event) {
+    event.preventDefault();
+    updatePoints();
+  });
 
 </script>
 <script async defer
