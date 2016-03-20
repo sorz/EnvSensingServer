@@ -1,0 +1,33 @@
+{% extends "front.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block title %}EnvSensing{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style>
+    #map { height: 500px; }
+  </style>
+{% endblock %}
+
+{% block main %}
+  <div id="map"></div>
+{% endblock %}
+
+{% block foot %}
+{{ super() }}
+<script>
+  var map;
+
+  function initMap() {
+    map = new google.maps.Map($('#map')[0], {
+      center: {lat: 22.18, lng: 113.55}, zoom: 12
+    });
+  }
+
+
+</script>
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_Ja3Oxmtdg05gKml206MOx8J0fE-8ndQ&callback=initMap&libraries=visualization">
+</script>
+<script async defer
+  scr="{{ url_for('static', filename='components/js-marker-clusterer/src/markerclusterer_compiled.js') }}">
+{% endblock %}

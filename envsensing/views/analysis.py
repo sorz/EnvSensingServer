@@ -25,3 +25,7 @@ def status():
     context['total_measures'] = MeasurePoint.query.count()
 
     return render_template('analysis/status.html', **context)
+
+@bp.route('/maps/')
+def maps():
+    return render_template('analysis/maps.html')
