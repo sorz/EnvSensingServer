@@ -23,6 +23,8 @@
 {{ super() }}
 <script>
   var map;
+  var mc;  // MarkerClusterer
+  var measures;
   var updateTimer;
 
   var $dateFrom = $('input#date-from');
@@ -32,6 +34,7 @@
     map = new google.maps.Map($('#map')[0], {
       center: {lat: 22.18, lng: 113.55}, zoom: 12
     });
+    mc = new MarkerClusterer(map);
 
     map.addListener('bounds_changed', function() {
       window.clearTimeout(updateTimer);
@@ -50,7 +53,20 @@
     args.to = $dateTo.val();
 
     $.getJSON(url, args, function(resp) {
-      console.log(resp.count);
+      console.log(resp.count + 'points loaded.');
+      measures = resp.points;
+      drawMarkers();
+    });
+  }
+
+  function drawMarkers() {
+    markers = new Array(measures.length);
+    measures.forEach(function(m, i) {
+      markers[i] = new google.maps.Marker({
+        position: { lat: m.latitude, lng: m.longitude },
+        title: 'item #' + i
+      });
+      mc.addMarker(markers[i]);
     });
   }
 
@@ -60,9 +76,10 @@
   });
 
 </script>
+<script
+  src="{{ url_for('static', filename='components/js-marker-clusterer/src/markerclusterer_compiled.js') }}">
+</script>
 <script async defer
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_Ja3Oxmtdg05gKml206MOx8J0fE-8ndQ&callback=initMap&libraries=visualization">
 </script>
-<script async defer
-  scr="{{ url_for('static', filename='components/js-marker-clusterer/src/markerclusterer_compiled.js') }}">
 {% endblock %}
