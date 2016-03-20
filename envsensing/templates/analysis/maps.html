@@ -6,6 +6,8 @@
   <style>
     #map { height: 500px; }
   </style>
+  <link href="{{ url_for('static', filename='components/jquery-loading/dist/jquery.loading.min.css') }}"
+      rel="stylesheet" />
 {% endblock %}
 
 {% block main %}
@@ -27,6 +29,7 @@
   var measures;
   var updateTimer;
 
+  var $map = $('#map');
   var $dateFrom = $('input#date-from');
   var $dateTo = $('input#date-to');
 
@@ -52,14 +55,18 @@
     args.from = $dateFrom.val();
     args.to = $dateTo.val();
 
+    $map.loading();
     $.getJSON(url, args, function(resp) {
       console.log(resp.count + 'points loaded.');
       measures = resp.points;
       drawMarkers();
+    }).always(function() {
+      $map.loading('stop');
     });
   }
 
   function drawMarkers() {
+    mc.clearMarkers();
     markers = new Array(measures.length);
     measures.forEach(function(m, i) {
       markers[i] = new google.maps.Marker({
@@ -78,6 +85,9 @@
 </script>
 <script
   src="{{ url_for('static', filename='components/js-marker-clusterer/src/markerclusterer_compiled.js') }}">
+</script>
+<script async defer
+  src="{{ url_for('static', filename='components/jquery-loading/dist/jquery.loading.min.js') }}">
 </script>
 <script async defer
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_Ja3Oxmtdg05gKml206MOx8J0fE-8ndQ&callback=initMap&libraries=visualization">

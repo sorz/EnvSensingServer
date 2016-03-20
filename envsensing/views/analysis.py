@@ -54,7 +54,6 @@ def area():
         points = points.filter(MeasurePoint.timestamp >= date_from)
     if date_to is not None:
         points = points.filter(MeasurePoint.timestamp < date_to)
-    print(points)
 
     measures = []
     for p in points:

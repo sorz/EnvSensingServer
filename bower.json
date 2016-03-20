@@ -1,6 +1,7 @@
 {
   "name": "envsensing",
   "dependencies": {
-    "js-marker-clusterer": "master"
+    "js-marker-clusterer": "master",
+    "jquery-loading": "master"
   }
 }
