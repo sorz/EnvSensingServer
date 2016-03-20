@@ -21,7 +21,7 @@
   <div id="map"></div>
 
   <div id="cluster-modal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -32,6 +32,44 @@
           <p><span class="header">No. of points:</span> <span id="c-count"></span></p>
           <p><span class="header">Duration:</span> from <span id="c-date-from"></span>
              to <span id="c-date-to"></span></p>
+
+          <div id="c-tab">
+            <ul class="nav nav-tabs" role="tablist">
+              <li role="presentation" class="active"><a href="#temperature"
+                  aria-controls="temperature" role="tab" data-toggle="tab">Temperature</a></li>
+              <li role="presentation"><a href="#humidity"
+                  aria-controls="humidity" role="tab" data-toggle="tab">Humidity</a></li>
+              <li role="presentation"><a href="#pressure"
+                  aria-controls="pressure" role="tab" data-toggle="tab">Pressure</a></li>
+              <li role="presentation"><a href="#monoxide"
+                  aria-controls="monoxide" role="tab" data-toggle="tab">Monoxide</a></li>
+              <li role="presentation"><a href="#oxidizing"
+                  aria-controls="oxidizing" role="tab" data-toggle="tab">Oxidizing Gas</a></li>
+              <li role="presentation"><a href="#reducing"
+                  aria-controls="reducing" role="tab" data-toggle="tab">Reducing Gas</a></li>
+            </ul>
+            <div class="tab-content">
+              <div role="tabpanel" class="tab-pane active" id="temperature">
+                <div id="line-temp"></div>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="humidity">
+                <div id="line-humi"></div>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="pressure">
+                <div id="line-pres"></div>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="monoxide">
+                <div id="line-mono"></div>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="oxidizing">
+                <div id="line-oxid"></div>
+              </div>
+              <div role="tabpanel" class="tab-pane" id="reducing">
+                <div id="line-redu"></div>
+              </div>
+            </div>
+          </div><!-- /#c-type -->
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -44,6 +82,7 @@
 
 {% block foot %}
 {{ super() }}
+<script src="https://www.google.com/jsapi"></script>
 <script>
   var map;
   var mc;  // MarkerClusterer
@@ -54,6 +93,8 @@
   var $map = $('#map');
   var $dateFrom = $('input#date-from');
   var $dateTo = $('input#date-to');
+
+  google.load('visualization', '1.1', { packages: ['corechart'] });
 
   function initMap() {
     map = new google.maps.Map($('#map')[0], {
@@ -111,8 +152,9 @@
     cluster.getMarkers().forEach(function(m, i) {
       points[i] = measures[m.id];
     });
+    points.sort(function(a, b) { return a.timestamp - b.timestamp; });
 
-    var timestamps = Array.map(points, function(p) { return p.timestamp; });
+    var timestamps = points.map(function(p) { return p.timestamp; });
     var timeMin = Math.min.apply(null, timestamps);
     var timeMax = Math.max.apply(null, timestamps);
 
@@ -121,6 +163,43 @@
     $('#c-date-from').text(new Date(timeMin * 1000));
     $('#c-date-to').text(new Date(timeMax * 1000));
 
+    var data = new google.visualization.DataTable();
+    data.addColumn('datetime', 'Date');
+    data.addColumn('number', 'Temperature (°C)');
+    data.addColumn('number', 'Humidity (%)');
+    data.addColumn('number', 'Pressure (hPa)');
+    data.addColumn('number', 'Monoxide (ppm)');
+    data.addColumn('number', 'Oxidizing Gas (ohm)');
+    data.addColumn('number', 'Reducing Gas (ohm)');
+    data.addRows(points.map(function(p) {
+      var col = new Array(7);
+      col[0] = new Date(p.timestamp * 1000);
+      p.values.forEach(function(v) {
+        if (v.type == 'Temperature')
+          col[1] = v.value - 273.15;
+        else if (v.type == 'Humidity')
+          col[2] = v.value;
+        else if (v.type == 'Pressure')
+          col[3] = v.value / 100;
+        else if (v.type == 'Monoxide')
+          col[4] = Math.max(0.0, v.value);
+        else if (v.type == 'OxidizingGas')
+          col[5] = v.value;
+        else if (v.type == 'ReducingGas')
+          col[6] = v.value;
+      });
+      return col;
+    }));
+
+    var options = {pointSize: 4, width: 850, height: 450, curveType: 'function'}
+    var lineIds = ['temp', 'humi', 'pres', 'mono', 'oxid', 'redu'];
+    var lines = new Array(6);
+    lineIds.forEach(function(id, i) {
+      lines[i] = new google.visualization.LineChart($('#line-' + id)[0]);
+      var view = new google.visualization.DataView(data);
+      view.setColumns([0, i+1]);
+      lines[i].draw(view, options);
+    });
 
     $('#cluster-modal').modal('show');
   }
