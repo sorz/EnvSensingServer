@@ -58,6 +58,7 @@ def area():
     measures = []
     for p in points:
         item = dict(timestamp=p.timestamp.timestamp(),
+                    deviceId=p.device_id,
                     latitude=p.latitude, longitude=p.longitude,
                     accuracy=p.accuracy, values=[])
         for value in p.values.all():

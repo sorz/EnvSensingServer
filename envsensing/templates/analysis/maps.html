@@ -19,6 +19,27 @@
     <button id="update" class="btn btn-default">Update</button>
   </form>
   <div id="map"></div>
+
+  <div id="cluster-modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Cluster Analysis</h4>
+        </div>
+        <div class="modal-body">
+          <p><span class="header">Center:</span> <span id="c-coordinate"></span></p>
+          <p><span class="header">No. of points:</span> <span id="c-count"></span></p>
+          <p><span class="header">Duration:</span> from <span id="c-date-from"></span>
+             to <span id="c-date-to"></span></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
 {% endblock %}
 
 {% block foot %}
@@ -38,7 +59,7 @@
     map = new google.maps.Map($('#map')[0], {
       center: {lat: 22.18, lng: 113.55}, zoom: 12
     });
-    mc = new MarkerClusterer(map);
+    mc = new MarkerClusterer(map, [], {zoomOnClick: false});
 
     map.addListener('bounds_changed', function() {
       window.clearTimeout(updateTimer);
@@ -52,6 +73,8 @@
         dataBounds = bounds;
       }, 3000);
     });
+
+    google.maps.event.addListener(mc, 'clusterclick', displayCluster);
   }
 
   function updatePoints() {
@@ -62,7 +85,7 @@
 
     $map.loading();
     $.getJSON(url, args, function(resp) {
-      console.log(resp.count + 'points loaded.');
+      console.log(resp.count + ' points loaded.');
       measures = resp.points;
       drawMarkers();
     }).always(function() {
@@ -78,14 +101,35 @@
         position: { lat: m.latitude, lng: m.longitude },
         title: 'item #' + i
       });
+      markers[i].id = i;
       mc.addMarker(markers[i]);
     });
+  }
+
+  function displayCluster(cluster) {
+    var points = new Array(cluster.getMarkers().length);
+    cluster.getMarkers().forEach(function(m, i) {
+      points[i] = measures[m.id];
+    });
+
+    var timestamps = Array.map(points, function(p) { return p.timestamp; });
+    var timeMin = Math.min.apply(null, timestamps);
+    var timeMax = Math.max.apply(null, timestamps);
+
+    $('#c-coordinate').text(cluster.getCenter());
+    $('#c-count').text(cluster.getSize());
+    $('#c-date-from').text(new Date(timeMin * 1000));
+    $('#c-date-to').text(new Date(timeMax * 1000));
+
+
+    $('#cluster-modal').modal('show');
   }
 
   $('#update').click(function(event) {
     event.preventDefault();
     updatePoints();
   });
+
 
 </script>
 <script
