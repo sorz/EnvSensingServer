@@ -41,7 +41,12 @@ See also: [EnvSensingClient](https://github.com/sorz/EnvSensingClient)
    $ ./run.py create_db
    ```
 
-6. Start server in debugging mode.
+6. Install JavaScript libraries;
+   ```
+   $ ./run.py bower_install
+   ```
+
+7. Start server in debugging mode.
    ```
    $ ./run.py run
    ```
