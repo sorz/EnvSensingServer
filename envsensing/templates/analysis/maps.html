@@ -28,6 +28,7 @@
   var mc;  // MarkerClusterer
   var measures;
   var updateTimer;
+  var dataBounds;
 
   var $map = $('#map');
   var $dateFrom = $('input#date-from');
@@ -42,9 +43,13 @@
     map.addListener('bounds_changed', function() {
       window.clearTimeout(updateTimer);
       updateTimer = window.setTimeout(function() {
-        console.log('Updating points');
-        console.log(map.getBounds().toJSON());
+        var bounds = map.getBounds();
+        if (dataBounds)
+          if (dataBounds.contains(bounds.getNorthEast()) &&
+              dataBounds.contains(bounds.getSouthWest()))
+            return;
         updatePoints();
+        dataBounds = bounds;
       }, 3000);
     });
   }
