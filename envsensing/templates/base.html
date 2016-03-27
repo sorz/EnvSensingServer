@@ -27,7 +27,7 @@
       $.ajaxSetup({
         beforeSend: function(xhr, settings) {
           if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain)
-            hr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}");
+            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}");
         }
       });
     </script>
