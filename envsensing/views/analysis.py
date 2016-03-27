@@ -3,11 +3,14 @@ from flask import Blueprint, render_template, redirect, url_for, request, \
 from flask.ext.login import login_required, login_user, logout_user, \
         current_user
 from datetime import datetime, timedelta
+from sklearn.metrics import silhouette_score
+from sklearn.cluster import MiniBatchKMeans as KMeans
+import numpy as np
 
 from .. import db
 from ..models.user import User
 from ..models.device import Device
-from ..models.measure import MeasurePoint
+from ..models.measure import MeasurePoint, MeasureValue, SENSOR_NAMES
 
 
 bp = Blueprint("analysis", __name__)
@@ -30,6 +33,16 @@ def status():
 @bp.route('/maps/')
 def maps():
     return render_template('analysis/maps.html')
+
+
+def _point_to_json_dict(point):
+    item = dict(timestamp=point.timestamp.timestamp(),
+                deviceId=point.device_id,
+                latitude=point.latitude, longitude=point.longitude,
+                accuracy=point.accuracy, values=[])
+    for value in point.values.all():
+        item['values'].append(dict(type=value.type_name, value=value.value))
+    return item
 
 
 @bp.route('/maps/area/')
@@ -55,14 +68,41 @@ def area():
     if date_to is not None:
         points = points.filter(MeasurePoint.timestamp < date_to)
 
-    measures = []
-    for p in points:
-        item = dict(timestamp=p.timestamp.timestamp(),
-                    deviceId=p.device_id,
-                    latitude=p.latitude, longitude=p.longitude,
-                    accuracy=p.accuracy, values=[])
-        for value in p.values.all():
-            item['values'].append(dict(type=value.type_name, value=value.value))
-        measures.append(item)
+    measures = [_point_to_json_dict(p) for p in points]
     return jsonify(count=len(measures), points=measures)
+
+
+CLUSTER_SENSOR_TYPES = ['Temperature', 'Humidity',
+                        'OxidizingGas', 'ReducingGas']
+
+@bp.route('/maps/cluster/', methods=['POST'])
+def do_clustering():
+    keys = request.get_json()
+
+    points = []
+    values = []
+    types = set(CLUSTER_SENSOR_TYPES)
+    for id, timestamp in keys:
+        time = datetime.fromtimestamp(timestamp)
+        point = MeasurePoint.query.get((id, time))
+        value = {v.type_name: v.value for v in point.values.all()}
+        if not set(value.keys()) >= types:
+            continue
+        # Normalization:
+        value['OxidizingGas'] /= 1000
+        value['ReducingGas'] /= 10000
+        points.append(point)
+        values.append(value)
+
+    X = [[v[t] for t in CLUSTER_SENSOR_TYPES]
+         for v in values]
+    X = np.array(X)
+    k = KMeans(n_clusters=2, init='k-means++')
+    k.fit(X)
+    score = silhouette_score(X, k.labels_)
+
+    groups = [[_point_to_json_dict(p) for p, l in
+              zip(points, k.labels_) if l == i] for i in k.labels_]
+
+    return jsonify(score=score, groups=groups)
 
