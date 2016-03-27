@@ -32,6 +32,8 @@
           <p><span class="header">No. of points:</span> <span id="c-count"></span></p>
           <p><span class="header">Duration:</span> from <span id="c-date-from"></span>
              to <span id="c-date-to"></span></p>
+          <button type="button" class="btn btn-primary pull-right" id="btn-cluster">Do Clustering</button>
+          <p></p>
 
           <div id="c-tab">
             <ul class="nav nav-tabs" role="tablist">
@@ -93,6 +95,7 @@
   var $map = $('#map');
   var $dateFrom = $('input#date-from');
   var $dateTo = $('input#date-to');
+  var $btnCluster = $('#btn-cluster');
 
   google.load('visualization', '1.1', { packages: ['corechart'] });
 
@@ -199,6 +202,29 @@
       var view = new google.visualization.DataView(data);
       view.setColumns([0, i+1]);
       lines[i].draw(view, options);
+    });
+
+    // Clustering.
+    $btnCluster.unbind('click');
+    $btnCluster.click(function() {
+      var keys = new Array(points.length);
+      points.forEach(function(p, i) {
+        keys[i] = [p.deviceId, p.timestamp];
+      });
+
+      $btnCluster.attr('disabled', '');
+      $.ajax('cluster/', {
+          data: JSON.stringify(keys),
+          contentType: 'application/json',
+          type: 'POST'}, function(result) {
+
+        // TODO
+        console.log(result);
+
+      }).always(function() {
+        $btnCluster.removeAttr('disabled');
+      });
+
     });
 
     $('#cluster-modal').modal('show');
