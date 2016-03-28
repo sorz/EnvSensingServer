@@ -1,4 +1,3 @@
-
 function initializeNavbar() {
 
   // Active item correspond to current visiting page on navbar.
@@ -25,3 +24,7 @@ $(document).ready(function() {
   initializeNavbar();
 
 });
+
+var SENSOR_NAMES = ['Temperature', 'Humidity', 'Pressure',
+    'Monoxide', 'OxidizingGas', 'ReducingGas'];
+
