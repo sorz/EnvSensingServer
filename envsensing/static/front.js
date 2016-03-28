@@ -28,3 +28,14 @@ $(document).ready(function() {
 var SENSOR_NAMES = ['Temperature', 'Humidity', 'Pressure',
     'Monoxide', 'OxidizingGas', 'ReducingGas'];
 
+var MONTH_NAMES = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May.', 'Jun.',
+    'Jul.', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.'];
+
+function formatDatetime(date) {
+  var d = date.getDate();
+  var m = MONTH_NAMES[date.getMonth()];
+  var y = date.getFullYear();
+  var H = date.getHours();
+  var M = date.getMinutes();
+  return d + ' ' + m + ' ' + y + ' ' + H + ':' + M;
+}

@@ -119,8 +119,8 @@ function displayCluster(cluster) {
 
   $('#c-coordinate').text(cluster.getCenter());
   $('#c-count').text(cluster.getSize());
-  $('#c-date-from').text(new Date(timeMin * 1000));
-  $('#c-date-to').text(new Date(timeMax * 1000));
+  $('#c-date-from').text(formatDatetime(new Date(timeMin * 1000)));
+  $('#c-date-to').text(formatDatetime(new Date(timeMax * 1000)));
 
   drawLineCharts(points);
 
@@ -156,6 +156,7 @@ function displayCluster(cluster) {
           $(this).addClass('active');
           $btnClustered.children('')
         });
+      $btns.removeClass('active');
       $('#btn-mixed').addClass('active');
     }).always(function() {
       $btnCluster.removeAttr('disabled');
@@ -170,4 +171,3 @@ $('#update').click(function(event) {
   event.preventDefault();
   updatePoints();
 });
-
