@@ -1,5 +1,5 @@
 body { padding-top: 20px; padding-bottom: 20px; }
-
 .navbar { margin-bottom: 20px; }
-
 footer { text-align: right; color: lightgray; font-size: 0.9em; }
+
+#map { height: 500px; }

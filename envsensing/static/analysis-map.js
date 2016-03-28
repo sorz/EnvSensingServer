@@ -9,6 +9,7 @@ var $dateFrom = $('input#date-from');
 var $dateTo = $('input#date-to');
 var $btnCluster = $('#btn-cluster');
 var $btnClustered = $('#btn-clustered');
+var $clusterInfo = $('#cluster-info');
 
 google.load('visualization', '1.1', { packages: ['corechart'] });
 
@@ -127,6 +128,7 @@ function displayCluster(cluster) {
   // Clustering.
   $btnCluster.show();
   $btnClustered.hide();
+  $clusterInfo.hide();
   $btnCluster.unbind('click');
   $btnCluster.click(function() {
     var keys = new Array(points.length);
@@ -141,6 +143,11 @@ function displayCluster(cluster) {
       type: 'POST'
     }).done(function(result) {
       // result: { score: ..., groups: [[...], [...]]}
+      $('#c-score').text(result.score);
+      $('#c-g1-count').text(result.groups[0].length);
+      $('#c-g2-count').text(result.groups[1].length);
+      $clusterInfo.show();
+
       var $btns = $btnClustered.children('.btn');
       $btnCluster.hide();
       $btnClustered.show();

@@ -4,7 +4,8 @@
 {% block head %}
   {{ super() }}
   <style>
-    #map { height: 500px; }
+    span.header { display: inline-block; width: 6.5em; color: gray; }
+    span.line-2 { display: inline-block; margin-left: 6.8em; }
   </style>
   <link href="{{ url_for('static', filename='components/jquery-loading/dist/jquery.loading.min.css') }}"
       rel="stylesheet" />
@@ -28,17 +29,27 @@
           <h4 class="modal-title">Cluster Analysis</h4>
         </div>
         <div class="modal-body">
-          <p><span class="header">Center:</span> <span id="c-coordinate"></span></p>
-          <p><span class="header">No. of points:</span> <span id="c-count"></span></p>
-          <p><span class="header">Duration:</span> from <span id="c-date-from"></span>
-             to <span id="c-date-to"></span></p>
+
+          <div class="row">
+            <div class="col-md-6">
+              <p><span class="header">Center:</span> <span id="c-coordinate"></span></p>
+              <p><span class="header">No. of points:</span> <span id="c-count"></span></p>
+              <p><span class="header">Duration:</span> from <span id="c-date-from"></span><br>
+                <span class="line-2"> to</span> <span id="c-date-to"></span></p>
+            </div>
+            <div class="col-md-6" id="cluster-info">
+              <p><span class="header">Silhouette score:</span> <span id="c-score"></span></p>
+              <p><span class="header">Group 1:</span> <span id="c-g1-count"></span> points</p>
+              <p><span class="header">Group 2:</span> <span id="c-g2-count"></span> points</p>
+            </div>
+          </div><!--/.row -->
+
           <button type="button" class="btn btn-primary pull-right" id="btn-cluster">Do Clustering</button>
           <div class="btn-group pull-right" id="btn-clustered" role="group">
             <button type="button" class="btn btn-default" id="btn-mixed">Mixed</button>
             <button type="button" class="btn btn-default" id="btn-group-1">Group 1</button>
             <button type="button" class="btn btn-default" id="btn-group-2">Group 2</button>
           </div>
-          <p></p>
 
           <div id="c-tab">
             <ul class="nav nav-tabs" role="tablist">
