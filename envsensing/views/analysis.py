@@ -102,7 +102,8 @@ def do_clustering():
     score = silhouette_score(X, k.labels_)
 
     groups = [[_point_to_json_dict(p) for p, l in
-              zip(points, k.labels_) if l == i] for i in k.labels_]
+              zip(points, k.labels_) if l == i] for i in
+              range(max(k.labels_) + 1)]
 
     return jsonify(score=score, groups=groups)
 
