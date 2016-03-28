@@ -33,6 +33,11 @@
           <p><span class="header">Duration:</span> from <span id="c-date-from"></span>
              to <span id="c-date-to"></span></p>
           <button type="button" class="btn btn-primary pull-right" id="btn-cluster">Do Clustering</button>
+          <div class="btn-group pull-right" id="btn-clustered" role="group">
+            <button type="button" class="btn btn-default" id="btn-mixed">Mixed</button>
+            <button type="button" class="btn btn-default" id="btn-group-1">Group 1</button>
+            <button type="button" class="btn btn-default" id="btn-group-2">Group 2</button>
+          </div>
           <p></p>
 
           <div id="c-tab">
@@ -96,6 +101,7 @@
   var $dateFrom = $('input#date-from');
   var $dateTo = $('input#date-to');
   var $btnCluster = $('#btn-cluster');
+  var $btnClustered = $('#btn-clustered');
 
   google.load('visualization', '1.1', { packages: ['corechart'] });
 
@@ -150,21 +156,9 @@
     });
   }
 
-  function displayCluster(cluster) {
-    var points = new Array(cluster.getMarkers().length);
-    cluster.getMarkers().forEach(function(m, i) {
-      points[i] = measures[m.id];
-    });
+
+  function drawLineCharts(points) {
     points.sort(function(a, b) { return a.timestamp - b.timestamp; });
-
-    var timestamps = points.map(function(p) { return p.timestamp; });
-    var timeMin = Math.min.apply(null, timestamps);
-    var timeMax = Math.max.apply(null, timestamps);
-
-    $('#c-coordinate').text(cluster.getCenter());
-    $('#c-count').text(cluster.getSize());
-    $('#c-date-from').text(new Date(timeMin * 1000));
-    $('#c-date-to').text(new Date(timeMax * 1000));
 
     var data = new google.visualization.DataTable();
     data.addColumn('datetime', 'Date');
@@ -203,8 +197,29 @@
       view.setColumns([0, i+1]);
       lines[i].draw(view, options);
     });
+  }
+
+
+  function displayCluster(cluster) {
+    var points = new Array(cluster.getMarkers().length);
+    cluster.getMarkers().forEach(function(m, i) {
+      points[i] = measures[m.id];
+    });
+
+    var timestamps = points.map(function(p) { return p.timestamp; });
+    var timeMin = Math.min.apply(null, timestamps);
+    var timeMax = Math.max.apply(null, timestamps);
+
+    $('#c-coordinate').text(cluster.getCenter());
+    $('#c-count').text(cluster.getSize());
+    $('#c-date-from').text(new Date(timeMin * 1000));
+    $('#c-date-to').text(new Date(timeMax * 1000));
+
+    drawLineCharts(points);
 
     // Clustering.
+    $btnCluster.show();
+    $btnClustered.hide();
     $btnCluster.unbind('click');
     $btnCluster.click(function() {
       var keys = new Array(points.length);
@@ -214,13 +229,27 @@
 
       $btnCluster.attr('disabled', '');
       $.ajax('cluster/', {
-          data: JSON.stringify(keys),
-          contentType: 'application/json',
-          type: 'POST'}, function(result) {
-
-        // TODO
-        console.log(result);
-
+        data: JSON.stringify(keys),
+        contentType: 'application/json',
+        type: 'POST'
+      }).done(function(result) {
+        // result: { score: ..., groups: [[...], [...]]}
+        var $btns = $btnClustered.children('.btn');
+        $btnCluster.hide();
+        $btnClustered.show();
+        $btns.unbind('click')
+          .click(function() {
+            if (this.id == 'btn-mixed')
+              drawLineCharts(points);
+            else if (this.id == 'btn-group-1')
+              drawLineCharts(result.groups[0]);
+            else if (this.id == 'btn-group-2')
+              drawLineCharts(result.groups[1]);
+            $btns.removeClass('active');
+            $(this).addClass('active');
+            $btnClustered.children('')
+          });
+        $('#btn-mixed').addClass('active');
       }).always(function() {
         $btnCluster.removeAttr('disabled');
       });
