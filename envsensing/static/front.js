@@ -39,3 +39,7 @@ function formatDatetime(date) {
   var M = date.getMinutes();
   return d + ' ' + m + ' ' + y + ' ' + H + ':' + M;
 }
+
+function formatLatLng(v) {
+  return v.lat().toFixed(6) + ' lat, ' + v.lng().toFixed(6) + ' lng';
+}

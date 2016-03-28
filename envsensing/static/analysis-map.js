@@ -118,7 +118,7 @@ function displayCluster(cluster) {
   var timeMin = Math.min.apply(null, timestamps);
   var timeMax = Math.max.apply(null, timestamps);
 
-  $('#c-coordinate').text(cluster.getCenter());
+  $('#c-coordinate').text(formatLatLng(cluster.getCenter()));
   $('#c-count').text(cluster.getSize());
   $('#c-date-from').text(formatDatetime(new Date(timeMin * 1000)));
   $('#c-date-to').text(formatDatetime(new Date(timeMax * 1000)));
@@ -143,7 +143,7 @@ function displayCluster(cluster) {
       type: 'POST'
     }).done(function(result) {
       // result: { score: ..., groups: [[...], [...]]}
-      $('#c-score').text(result.score);
+      $('#c-score').text(result.score.toFixed(4));
       $('#c-g1-count').text(result.groups[0].length);
       $('#c-g2-count').text(result.groups[1].length);
       $clusterInfo.show();
